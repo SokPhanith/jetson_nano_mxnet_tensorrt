@@ -2,7 +2,7 @@ Deploying Mxnet model to TensorRT on Jetson Nano
 ====================================
 
 <p align="center">
-<img src="src/cat.png" alt="landing graphic" height="600px"/>
+<img src="src/cat.png" alt="landing graphic" height="800x"/>
 </p>
 
  The models are sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)**.The repository using NVIDIA **[TensorRT](https://developer.nvidia.com/tensorrt)** for deploying deep learning model mxnet onto the embedded Jetson Nano platform, improving performance by optimizations from onnx model convert from mxnet, FP32 and FP16 precision.we will guide you inference and real-time with CPU, GPU, FP32 and FP16 and fine-tune from pre-train **[ImageNet](https://image-net.org/)**.
