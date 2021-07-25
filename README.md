@@ -2,11 +2,11 @@ Deploying Mxnet model to TensorRT on Jetson Nano
 ====================================
 
 <p align="center">
-<img src="src/cat.png" alt="landing graphic" height="550x"/>
+<img src="src/gif_imagenet.gif" alt="landing graphic" height="550x"/>
 </p>
 
 <p align="center">
-<img src="src/fruit_0.png" alt="landing graphic" height="550x"/>
+<img src="src/cat.png" alt="landing graphic" height="550x"/>
 </p>
 
  The models are sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)**.The repository using NVIDIA **[TensorRT](https://developer.nvidia.com/tensorrt)** for deploying deep learning model mxnet onto the embedded Jetson Nano platform, improving performance by optimizations from onnx model convert from mxnet, FP32 and FP16 precision.we will guide you inference and real-time with CPU, GPU, FP32 and FP16 and fine-tune from pre-train **[ImageNet](https://image-net.org/)**.
@@ -248,6 +248,12 @@ Start fine-tuning with resnet18_v1 only last layer of model by load pre-train Im
 
 <p align="center">
 <img src="src/custom_resnet18.png" alt="landing graphic" height="550x"/>
+</p>
+
+**Example inference with Raspberrypi Camera V2**
+
+<p align="center">
+<img src="src/board.gif" alt="landing graphic" height="550x"/>
 </p>
 
 ## Fine tuning on google colab
