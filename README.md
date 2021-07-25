@@ -78,22 +78,198 @@ Afte you have a onnx model format at folder onnx_model, you can start build Tens
 
 When you run download_and convert.py will save pre-train model mxnet on folder name pretrain_model,About labels.txt for ImageNet in data folder, you can path to inference with a single image or csi or webcam or video. One thing very important is epoch that you export to save by default from ImageNet pre-train is 0. If you fine tuning with custom dataset different epoch you must change number of epoch while you export save checkpoint mxnet model.
 
-**RaspberryPi Camera V2**
-
-	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --csi
-		
-**A Single Image**
-
-	
-maximum performance by running these commands
+**maximum performance**
 
 	sudo nvpmodel -m 0
 	sudo jetson_clocks
 
+**RaspberryPi Camera V2 GPU**
+
+	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --csi
+
+**RaspberryPi Camera V2 CPU**
+
+	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --csi --cpu
+		
+**A Single Image**
+
+	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --image data/dog.jpg
+
+**Webcam**
+
+	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --webcam 0
+
+**Video**
+
+	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --video data/jellyfish.mkv
+
+## Inference with tensorrt
+-----
+
+while you build tensorrt engine model will saved at folder tensorrt_model. Runtime with tensorrt no need a number of epoch that export save because tensorrt was build from onnx model format.
+
+**maximum performance**
+
+	sudo nvpmodel -m 0
+	sudo jetson_clocks
+
+**FP16 and a single image**
+
+	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp16.engine --image data/dog.jpg
+	
+**FP32 and a single image**
+
+	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp32.engine --image data/dog.jpg
+		
+**Webcam**
+
+	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp16.engine --webcam 0 
+
+**Video**
+
+	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp16.engine --video data/jellyfish.mkv
+
+**RaspberryPi Camera V2**
+
+	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp16.engine --csi
+
+**Note** : inception_v3 input shape 299x299 when you inference, save epoch checkpoint and build tensorrt engine make sure input shape 299x299
+
 ## Result Inference Model
+-----
 
-Inference with a simple image cat.jpg 900x675 resolution
+Inference with a single image data/dog.jpg 365x480 resolution
+
 |     MODEL    |   FP16  |   FP32  |   GPU   |   CPU  |
-|:-------------:|:-------:|:--------:|:--------:|:-------:|
-| ------- | ----- | --- | ------- | ------- |
+|:------------:|:-------:|:-------:|:-------:|:------:|
+| resnet18_v1| 85.8FPS | 51.2FPS | 28.3FPS | 4.4FPS |
+| resnet34_v1| 49.2FPS | 28.8FPS | 15.9FPS | 2.4FPS |
+| resnet50_v1| 35.9FPS | 20.0FPS | 10.7FPS | 2.1FPS |
+| resnet101_v1| 20.2FPS | 11.3FPS | 6.0FPS | 1.2FPS |
+| resnet152_v1| 14.3FPS | 7.8FPS | 4.1FPS | 0.8FPS |
+| resnet18_v2| 79.2FPS | 49.4FPS | 28.0FPS | 4.4FPS |
+| resnet34_v2| 45.3FPS | 27.9FPS | 15.8FPS | 2.4FPS |
+| resnet50_v2| 28.8FPS | 17.0FPS | 10.7FPS | 2.1FPS |
+| resnet101_v2| 17.0FPS | 10.0FPS | 6.2FPS | 1.2FPS |
+| resnet152_v2| 11.9FPS | 7.0FPS | 4.3FPS | 0.8FPS |
+| densetnet121 | 33.1FPS | 21.9FPS | 8.9FPS | 1.9FPS |
+| densetnet161 | 13.3FPS | 8.2FPS | 4.3FPS | 0.9FPS |
+| densetnet169 | 26.2FPS | 17.2FPS | 6.9FPS | 1.5FPS |
+| densetnet201 | 20.0FPS | 13.1FPS | 5.5FPS | 1.2FPS |
+| densetnet201 | 20.0FPS | 13.1FPS | 5.5FPS | 1.2FPS |
+| mobilenet0_25 | 295FPS | 284FPS | 66FPS | 22FPS |
+| mobilenet0_5 | 165FPS | 160FPS | 60FPS | 12FPS |
+| mobilenet0_75 | 106FPS | 97.9FPS | 38.5FPS | 7.2FPS |
+| mobilenet1_0 | 78.6FPS | 68.4FPS | 28.5FPS | 5.3FPS |
+| mobilenet_v2_0_25 | 198FPS | 185FPS | 58.0FPS | 15.0FPS |
+| mobilenet_v2_0_5 | 127FPS | 119FPS | 47.0FPS | 8.2FPS |
+| mobilenet_v2_0_75 | 88.3FPS | 84.2FPS | 33.4FPS | 6.2FPS |
+| mobilenet_v2_1_0 | 70.7FPS | 66.6FPS | 25.8FPS | 4.5FPS |
+| vgg11 | 17.4FPS | 10.5FPS | 7.2FPS | 0.9FPS |
+| vgg11_bn | 18.5FPS | 11.2FPS | 7.0FPS | 0.9FPS |
+| vgg13 | 13.2FPS | 7.7FPS | 5.2FPS | 0.7FPS |
+| vgg13_bn | 13.2FPS | 7.9FPS | 5.0FPS | 0.6FPS |
+| vgg16 | 10.8FPS | 6.3FPS | 4.1FPS | 0.5FPS |
+| vgg16_bn | 10.8FPS | 6.3FPS | 4.0FPS | 0.5FPS |
+| vgg19 | 9.0FPS | 5.3FPS | 3.4FPS | 0.5FPS |
+| vgg19_bn | 9.1FPS | 5.2FPS | 3.3FPS | 0.5FPS |
+| squeezenet1_0 | - | - | 35.5FPS | 7.2FPS |
+| squeezenet1_0 | 206FPS | 136.7FPS | 61.2FPS | 13.0FPS |
+| alexnet | 67.3FPS | 44.0FPS | 33.5FPS | 4.1FPS |
+| inception_v3 | 22.1FPS | 12.1FPS | 6.0FPS | 1.3FPS |
 
+## Fine tuning custom dataset and deploy
+-----
+
+You can prepare your own custom dataset by my python file camera_tool.py.This tool will take a image from Webcam or Raspberrypi camera v2. Fisrt you must have a labels.txt file that show you that, The label file one class label per line and is alphabetized too(Very important so the order of the classes in the label file matches the order of the corresponding subdirectories on jetson nano).
+
+	- labels.txt
+		- arduino
+		- cnc
+		- esp8266
+		- pyboard
+		
+Ater then run a tool to cllecting Data by 
+
+**Raspberrypi Camera V2**
+	
+	python3 camera_tool.py --dataset_dir board --label labels.txt --csi
+
+**Webcam**
+	
+	python3 camera_tool.py --dataset_dir board --label labels.txt --webcam 0
+
+q for exit - s for save - c for change class - d for change folder train/valid/test
+you will get in folder board directory have 3 folder dataset train/valid/test and 4 class folder per train/valid/test
+
+	- board
+		- train
+			- arduino
+			- cnc
+			- esp8266
+			- pyboard
+		- valid
+			- arduino
+			- cnc
+			- esp8266
+			- pyboard
+		- test
+			- arduino
+			- cnc
+			- esp8266
+			- pyboard
+Start fine-tuning with resnet18_v1 only last layer of model by load pre-train ImageNet dataset
+
+	python3 train.py --model resnet18_v1 --dataset_dir board/ --output_dir output_training - num_class 4 --epoch 5 --lr 0.001 --batch_per_device 8
+	
+**Build TensorRT Engine**
+
+	python3 build_tensorrt.py --model output_training/resnet18_v1_custom.onnx
+	python3 build_tensorrt.py --model output_training/resnet18_v1_custom.onnx --fp16
+	
+**Inference GPU And CPU**
+
+	python3 runtime_simple.py --model output_training/resnet18_v1_custom  --epoch 5 --image board/test/arduino/1.jpg --label output_training/labels.txt
+	python3 runtime_simple.py --model output_training/resnet18_v1_custom  --epoch 5 --image board/test/arduino/1.jpg --label output_training/labels.txt --cpu
+
+**Inference TensorRT FP16 And FP32
+
+	python3 runtime_trt.py --model output_training/resnet18_v1_custom_fp16.engine --label output_training/labels.txt --image board/test/arduino/1.jpg 
+	python3 runtime_trt.py --model output_training/resnet18_v1_custom_fp32.engine --label output_training/labels.txt --image board/test/arduino/1.jpg 
+	
+**Example Inference With Image**
+
+<p align="center">
+<img src="src/custom_resnet18.png" alt="landing graphic" height="550x"/>
+</p>
+
+## Fine tuning on google colab
+-----
+
+If you want Fine tuning with big model like : vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn jetson nano cant not Fine tuning because out of memory but you can fine tuning on google colab FREE GPU. I prepare notebook for fine tuning in folder colab **training_vgg11_bn.ipynb** with vgg11_bn model, guide you install mxnet, onnx on google colab and connect with google drive for save output training. First Prepare custom dataset like above **Fine tuning custom dataset and deploy** and rename folder to dataset compress to dataset.zip and then upload to google drive.
+
+	- dataset
+		- train
+			- arduino
+			- cnc
+			- esp8266
+			- pyboard
+		- valid
+			- arduino
+			- cnc
+			- esp8266
+			- pyboard
+		- test
+			- arduino
+			- cnc
+			- esp8266
+			- pyboard
+	- Make dataset folder became dataset.zip upload your google drive.
+Let's start fine tuning by click **[Getting Start](https://colab.research.google.com/drive/18LXCd3nR8y5q-8khhDh1j2gkeIMJT8Ef)** or go to google colab upload my notebook and then go forward.
+
+	
+**Example Inference With Image**
+
+<p align="center">
+<img src="src/custom_vgg11_bn.png" alt="landing graphic" height="550x"/>
+</p>
