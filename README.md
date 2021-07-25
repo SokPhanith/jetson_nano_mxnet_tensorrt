@@ -5,6 +5,10 @@ Deploying Mxnet model to TensorRT on Jetson Nano
 <img src="src/cat.png" alt="landing graphic" height="550x"/>
 </p>
 
+<p align="center">
+<img src="src/fruit_0.png" alt="landing graphic" height="550x"/>
+</p>
+
  The models are sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)**.The repository using NVIDIA **[TensorRT](https://developer.nvidia.com/tensorrt)** for deploying deep learning model mxnet onto the embedded Jetson Nano platform, improving performance by optimizations from onnx model convert from mxnet, FP32 and FP16 precision.we will guide you inference and real-time with CPU, GPU, FP32 and FP16 and fine-tune from pre-train **[ImageNet](https://image-net.org/)**.
 
 ### Table of Contents
@@ -32,13 +36,14 @@ Deploying Mxnet model to TensorRT on Jetson Nano
 
         ./install_basics.sh
 
-4. Install mxnet pre-buil, onnx and onnxruntime on Jetson Nano 
+4. Install mxnet pre-built, onnx and onnxruntime on Jetson Nano 
 
         ./install.sh
 
 5. Install pycuda on Jetson Nano
 
         ./install_pycuda.sh
+	
 6. Add more swap memory on jetson nano by default 2GB
 
         sudo systemctl disable nvzramconfig
@@ -50,15 +55,15 @@ Deploying Mxnet model to TensorRT on Jetson Nano
 ## Download and Convert to ONNX model
 -----
 
-First Download pre-train ImageNet dataset Image classification from sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** by my python file just give a name model from those **[link](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** will download, save checkpoint epoch in folder pretrain_model and convert to **[ONNX](https://github.com/onnx/onnx)** model format in folder onnx_model
+First Download pre-train ImageNet dataset Image classification from sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** by my python file just give a name model from those **[link](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** will download, save checkpoint epoch  0 in folder pretrain_model and convert to **[ONNX](https://github.com/onnx/onnx)** model format in folder onnx_model
 
         cd ~
         cd jetson_nano_mxnet_tensorrt
         python3 downlaod_convert.py resnet18_v1
         
-# Out of Memory
+# Out of Memory Some Model
  
-For vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn download, save checkpoint epoch will no issues but when convert to onnx format model on jetson nano will not enough memory, so I have a notebook on folder colab name **mxnet_convert_onnx.ipynb**. That notebook guide you how to download pre-train, save checkpoint epoch and convert onnx model on google colab Free GPU just follow step by step. Click it by [Getting Start](https://colab.research.google.com/drive/1h1vWVw4VQlXY-xVCyYBxwF1KuyDB0cvK) or go to google colab upload my notebook and then go forward.
+For vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn download, save checkpoint epoch  0 will no issues but when convert to onnx format model on jetson nano will not enough memory, so I have a notebook on folder colab name **mxnet_convert_onnx.ipynb**. That notebook guide you how to download pre-train ImageNet, save checkpoint epoch  0 and convert onnx model on google colab Free GPU just follow step by step. Click it by **[Getting Start](https://colab.research.google.com/drive/1h1vWVw4VQlXY-xVCyYBxwF1KuyDB0cvK)** or go to **[Google Colab](https://colab.research.google.com/#create=true)** upload my notebook and then go forward, it's will downlaod onnx model format.
 
 ## Build TensorRT Engine FP16 and FP32
 -----
@@ -76,9 +81,9 @@ Afte you have a onnx model format at folder onnx_model, you can start build Tens
 ## Inference with cpu and gpu
 -----
 
-When you run download_and convert.py will save pre-train model mxnet on folder name pretrain_model,About labels.txt for ImageNet in data folder, you can path to inference with a single image or csi or webcam or video. One thing very important is epoch that you export to save by default from ImageNet pre-train is 0. If you fine tuning with custom dataset different epoch you must change number of epoch while you export save checkpoint mxnet model.
+When you run download_and_convert.py will save pre-train model mxnet on folder name pretrain_model, About labels.txt for ImageNet in data folder, you can path to inference with a single image or csi or webcam or video. One thing very important is epoch that you export to save by default from ImageNet pre-train is 0. If you fine tuning with custom dataset different epoch you must change number of epoch while you export save checkpoint mxnet model.
 
-**maximum performance**
+**Maximum Performance**
 
 	sudo nvpmodel -m 0
 	sudo jetson_clocks
@@ -108,16 +113,16 @@ When you run download_and convert.py will save pre-train model mxnet on folder n
 
 while you build tensorrt engine model will saved at folder tensorrt_model. Runtime with tensorrt no need a number of epoch that export save because tensorrt was build from onnx model format.
 
-**maximum performance**
+**Maximum Performance**
 
 	sudo nvpmodel -m 0
 	sudo jetson_clocks
 
-**FP16 and a single image**
+**FP16 and a Single Image**
 
 	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp16.engine --image data/dog.jpg
 	
-**FP32 and a single image**
+**FP32 and a Single Image**
 
 	python3 runtime_trt.py --model tensorrt_model/resnet18_v1_fp32.engine --image data/dog.jpg
 		
@@ -189,7 +194,7 @@ You can prepare your own custom dataset by my python file camera_tool.py.This to
 		- esp8266
 		- pyboard
 		
-Ater then run a tool to cllecting Data by 
+After then run a tool to cllecting Data by 
 
 **Raspberrypi Camera V2**
 	
@@ -232,12 +237,14 @@ Start fine-tuning with resnet18_v1 only last layer of model by load pre-train Im
 	python3 runtime_simple.py --model output_training/resnet18_v1_custom  --epoch 5 --image board/test/arduino/1.jpg --label output_training/labels.txt
 	python3 runtime_simple.py --model output_training/resnet18_v1_custom  --epoch 5 --image board/test/arduino/1.jpg --label output_training/labels.txt --cpu
 
-**Inference TensorRT FP16 And FP32
+**Inference TensorRT FP16 And FP32**
 
 	python3 runtime_trt.py --model output_training/resnet18_v1_custom_fp16.engine --label output_training/labels.txt --image board/test/arduino/1.jpg 
 	python3 runtime_trt.py --model output_training/resnet18_v1_custom_fp32.engine --label output_training/labels.txt --image board/test/arduino/1.jpg 
-	
-**Example Inference With Image**
+
+**Note** : inception_v3 input shape 299x299 when you fine tune you must set input 299x299.
+
+**Example inference with image resnet18_v1 model custom dataset**
 
 <p align="center">
 <img src="src/custom_resnet18.png" alt="landing graphic" height="550x"/>
@@ -246,7 +253,7 @@ Start fine-tuning with resnet18_v1 only last layer of model by load pre-train Im
 ## Fine tuning on google colab
 -----
 
-If you want Fine tuning with big model like : vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn jetson nano cant not Fine tuning because out of memory but you can fine tuning on google colab FREE GPU. I prepare notebook for fine tuning in folder colab **training_vgg11_bn.ipynb** with vgg11_bn model, guide you install mxnet, onnx on google colab and connect with google drive for save output training. First Prepare custom dataset like above **Fine tuning custom dataset and deploy** and rename folder to dataset compress to dataset.zip and then upload to google drive.
+If you want Fine tuning with big model like : vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn jetson nano can't not Fine tuning because out of memory but you can fine tuning on google colab FREE GPU. I prepare notebook for fine tuning in folder colab **training_vgg11_bn.ipynb** with vgg11_bn model, guide you install mxnet, onnx on google colab and connect with google drive for save output training. First Prepare custom dataset like above **Fine tuning custom dataset and deploy** and rename folder to dataset compress to dataset.zip and then upload to google drive.
 
 	- dataset
 		- train
@@ -265,10 +272,18 @@ If you want Fine tuning with big model like : vgg11, vgg11_bn, vgg13, vgg13_bn, 
 			- esp8266
 			- pyboard
 	- Make dataset folder became dataset.zip upload your google drive.
-Let's start fine tuning by click **[Getting Start](https://colab.research.google.com/drive/18LXCd3nR8y5q-8khhDh1j2gkeIMJT8Ef)** or go to google colab upload my notebook and then go forward.
+Let's start fine tuning by click **[Getting Start](https://colab.research.google.com/drive/18LXCd3nR8y5q-8khhDh1j2gkeIMJT8Ef)** or go to google colab upload my notebook and then go forward just make some edit on this point : 
 
+	You must edit : pretrain_name = 'vgg11_bn' 
+			num_class = 4
+
+**Note** : inception_v3 input shape 299x299 when you fine tune you must set input 299x299.
+
+<p align="center">
+<img src="src/colab_edit.png" alt="landing graphic" height="550x"/>
+</p>
 	
-**Example Inference With Image**
+**Example inference with image vgg11_bn model custom dataset**
 
 <p align="center">
 <img src="src/custom_vgg11_bn.png" alt="landing graphic" height="550x"/>
