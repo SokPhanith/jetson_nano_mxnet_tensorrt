@@ -32,7 +32,7 @@ Deploying Mxnet model to TensorRT on Jetson Nano
 
         ./install_basics.sh
 
-4. Install mxnet pre-build on Jetson Nano 
+4. Install mxnet pre-buil, onnx and onnxruntime on Jetson Nano 
 
         ./install.sh
 
@@ -46,12 +46,11 @@ Deploying Mxnet model to TensorRT on Jetson Nano
         sudo mkswap /mnt/6GB.swap
         sudo swapon /mnt/6GB.swap
         sudo reboot
-
-
+	
 ## Download and Convert to ONNX model
 -----
 
-First Download pre-train ImageNet dataset Image classification from sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** by my python file just give a name model from those link will download, save checkpoint epoch in folder pretrain_model and convert to **[ONNX](https://github.com/onnx/onnx)** model format in folder onnx_model
+First Download pre-train ImageNet dataset Image classification from sourced from the **[MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** by my python file just give a name model from those **[link](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)** will download, save checkpoint epoch in folder pretrain_model and convert to **[ONNX](https://github.com/onnx/onnx)** model format in folder onnx_model
 
         cd ~
         cd jetson_nano_mxnet_tensorrt
@@ -59,8 +58,33 @@ First Download pre-train ImageNet dataset Image classification from sourced from
         
 # Out of Memory
  
-For vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn download, save checkpoint epoch will no issues but when convert to onnx format model on jetson nan will not enough memory, so I have a notebook on folder colab name **mxnet_convert_onnx.ipynb**. That notebook guide you how to download pre-train, save checkpoint epoch and convert onnx model on google colab Free GPU just follow step by step. Click it by [Getting Start](https://colab.research.google.com/drive/1h1vWVw4VQlXY-xVCyYBxwF1KuyDB0cvK) or go to google colab upload my notebook and then go forward.
+For vgg11, vgg11_bn, vgg13, vgg13_bn, vgg16, vgg16_bn, vgg19, vgg19_bn download, save checkpoint epoch will no issues but when convert to onnx format model on jetson nano will not enough memory, so I have a notebook on folder colab name **mxnet_convert_onnx.ipynb**. That notebook guide you how to download pre-train, save checkpoint epoch and convert onnx model on google colab Free GPU just follow step by step. Click it by [Getting Start](https://colab.research.google.com/drive/1h1vWVw4VQlXY-xVCyYBxwF1KuyDB0cvK) or go to google colab upload my notebook and then go forward.
 
+## Build TensorRT Engine FP16 and FP32
+-----
+
+Afte you have a onnx model format at folder onnx_model, you can start build TensorRT model engine for runtime. Jetson Nano support Only FP16 and FP32 precision and Fastest model is FP16 precision. you can build model using like 
+
+**FP32**
+
+	python3 build_tensorrt.py --model onnx_model/resnet18_v1.onnx
+	
+**FP16**
+
+	python3 build_tensorrt.py --model onnx_model/resnet18_v1.onnx --fp16
+
+## Inference with cpu and gpu
+-----
+
+When you run download_and convert.py will save pre-train model mxnet on folder name pretrain_model,About labels.txt for ImageNet in data folder, you can path to inference with a single image or csi or webcam or video. One thing very important is epoch that you export to save by default from ImageNet pre-train is 0. If you fine tuning with custom dataset different epoch you must change number of epoch while you export save checkpoint mxnet model.
+
+**RaspberryPi Camera V2**
+
+	python3 runtime_simple.py --model pretrain_model/resnet18_v1 --epoch 0 --csi
+		
+**A Single Image**
+
+	
 maximum performance by running these commands
 
 	sudo nvpmodel -m 0
