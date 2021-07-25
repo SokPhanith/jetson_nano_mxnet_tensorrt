@@ -294,3 +294,7 @@ Let's start fine tuning by click **[Getting Start](https://colab.research.google
 <p align="center">
 <img src="src/custom_vgg11_bn.png" alt="landing graphic" height="600x"/>
 </p>
+
+# References
+ - [tensorrt_demos](https://github.com/jkjung-avt/tensorrt_demos)
+ - [MXNET Gluon Model Zoo](https://mxnet.apache.org/versions/1.8.0/api/python/docs/api/gluon/model_zoo/index.html)
